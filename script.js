@@ -15,7 +15,7 @@ const displayAiTools = (aiTools) =>{
         div.classList = 'card bg-base-100 shadow-xl'
         div.innerHTML = `
         <figure class="px-8 pt-8">
-        <img src="${tools.image?tools.image:'No Image Found'}" alt="Shoes" class="rounded-xl" />
+        <img src="${tools.image?tools.image:''}" onerror="setDefaultImage(this)" class="rounded-xl" />
       </figure>
       <div class="card-body">
         <h2 class="card-title">Features</h2>
@@ -33,10 +33,12 @@ const displayAiTools = (aiTools) =>{
               <p>${tools?.published_in}</p>
             </div>
           </div>
+          
           <img onclick= "modalHandler('${tools.id}')" src="./image/arrowicon.png" class="scale-100 hover:scale-125 ease-in duration-500 cursor-pointer" alt="">
         </div>
       </div>
         `
+
         aiToolsContainer.appendChild(div)
     });
 }
@@ -48,6 +50,69 @@ const modalHandler = async (toolsId) =>{
     const res = await fetch(`https://openapi.programming-hero.com/api/ai/tool/${toolsId}`)
     const data = await res.json();
     const singleData = data.data;
+    console.log(singleData);
+  const modalContainer = document.getElementById('modal-container');
+  modalContainer.innerHTML = `
+
+<dialog id="ai-modal" class="modal">
+  <form method="dialog" class="modal-box  w-9/12 max-w-5xl">
+    <button class="btn btn-sm btn-circle btn-error absolute right-2 top-2">✕</button>
+    <div class="flex flex-col-reverse lg:flex-row justify-between items-center gap-5 m-2">
+    <div class="card w-full lg:w-1/2 lg:min-h-[500px] bg-red-100 shadow-xl">
+
+      <div class="card-body items-center space-y-5">
+        <h2 class="card-title text-center font-bold">${singleData?.description}</h2>
+
+        <div class="flex flex-col lg:flex-row gap-5 justify-between items-center">
+          <div class="stats shadow">
+          <h2 class="stat text-2xl font-bold text-green-600">$10/ <br>month <br> Basic</h2>
+          </div>
+          <div class="stats shadow">
+          <h2 class="stat text-2xl font-bold text-orange-600">$30/ <br>month <br> Basic</h2>
+          </div>
+          <div class="stats shadow">
+          <h2 class="stat text-2xl font-bold text-red-500">$50/ <br>month <br> Basic</h2>
+          </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-5">
+          <div>
+            <h2 class="text-2xl font-bold">Features</h2>
+            <p>1.${singleData?.features[1]?.feature_name}</p>
+            <p>2.${singleData?.features[2]?.feature_name}</p>
+            <p>3.${singleData?.features[3]?.feature_name}</p>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold">Integrations</h2>
+            <p>1.${singleData.integrations[0]?singleData.integrations[0]:"No Data Found"}</p>
+            <p>2.${singleData.integrations[1]?singleData.integrations[1]:"No Data Found"}</p>
+            <p>3.${singleData.integrations[2]?singleData.integrations[2]:"No Data Found"}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card w-full lg:w-1/2 lg:min-h-[500px] bg-red-50 shadow-xl">
+      <figure class="px-8 pt-8 relative">
+        <img src="${singleData?.image_link[1]}" alt="" class="rounded-xl" />
+      </figure>
+      <div class="card-body items-center text-center">
+        <h2 class="card-title">Hi, how are you doing today?!</h2>
+        <p>I'm doing well, thank you for asking. How can I assist you today?</p>
+      </div>
+    </div>
+  </div>
+  </form>
+</dialog>
+
+  `
+  const aiModal = document.getElementById('ai-modal');
+  aiModal.showModal()
+}
+
+
+// if didn't find any img the this function  set a default image
+function setDefaultImage(img) {
+  img.src = "./image/notfond.png";
 }
 
 loadData()
